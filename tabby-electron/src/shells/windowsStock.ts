@@ -114,14 +114,19 @@ export class WindowsStockShellsProvider extends WindowsBaseShellProvider {
     }
 
     /**
-     * Checks whether a file exists without following its reparse point.
-     *
-     * `fs.stat`/`fs.access` fail on Windows App Execution Alias reparse
-     * points (e.g. `pwsh.exe` when PowerShell 7 is installed from the
-     * Microsoft Store), even though the file is runnable. Listing the
-     * parent directory instead avoids resolving the reparse target.
+     * Checks whether a file exists, working around a Node.js limitation on
+     * Windows App Execution Alias reparse points (e.g. `pwsh.exe` when
+     * PowerShell 7 is installed from the Microsoft Store): `fs.stat` throws
+     * for these even though the file is runnable. `fs.stat` is tried first
+     * since it's fast and works for regular files; if it fails, the parent
+     * directory is listed as a fallback, which doesn't require resolving
+     * the reparse target.
      */
     private async fileExists (filePath: string): Promise<boolean> {
+        try {
+            await fs.stat(filePath)
+            return true
+        } catch { }
         try {
             const targetName = path.basename(filePath).toLowerCase()
             const names = await fs.readdir(path.dirname(filePath))
