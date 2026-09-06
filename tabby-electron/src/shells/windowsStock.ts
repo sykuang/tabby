@@ -41,7 +41,7 @@ export class WindowsStockShellsProvider extends WindowsBaseShellProvider {
                 `clink_${process.arch}.exe`,
             )
         }
-        return [
+        const shells: Shell[] = [
             {
                 id: 'clink',
                 name: 'CMD (clink)',
@@ -62,39 +62,55 @@ export class WindowsStockShellsProvider extends WindowsBaseShellProvider {
                 icon: require('../icons/cmd.svg'),
                 shellType: 'cmd',
             },
-            {
+        ]
+
+        const powershellPath = await this.findExecutable([
+            `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`,
+            `${process.env.SystemRoot}\\System32\\powershell.exe`,
+        ], 'powershell.exe')
+        if (powershellPath) {
+            shells.push({
                 id: 'powershell',
                 name: 'PowerShell',
-                command: await this.getPowerShellPath(),
+                command: powershellPath,
                 args: ['-nologo'],
                 icon: require('../icons/powershell.svg'),
                 env: this.getEnvironment(),
                 shellType: 'powershell',
-            },
-        ]
-    }
+            })
+        }
 
-    private async getPowerShellPath () {
-        // Check well-known paths first to avoid slow PATH scanning via `which`
-        for (const psPath of [
+        const pwshPath = await this.findExecutable([
             `${process.env.USERPROFILE}\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe`,
             `${process.env.ProgramFiles}\\PowerShell\\7\\pwsh.exe`,
             `${process.env['ProgramFiles(x86)']}\\PowerShell\\7\\pwsh.exe`,
-            `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`,
-            `${process.env.SystemRoot}\\System32\\powershell.exe`,
-        ]) {
+        ], 'pwsh.exe')
+        if (pwshPath) {
+            shells.push({
+                id: 'pwsh',
+                name: 'PowerShell 7',
+                command: pwshPath,
+                args: ['-nologo'],
+                icon: require('../icons/powershell-core.svg'),
+                env: this.getEnvironment(),
+                shellType: 'powershell',
+            })
+        }
+
+        return shells
+    }
+
+    /**
+     * Looks for an executable at the given well-known paths first (fast),
+     * falling back to a PATH search by `name` (slower) if none are found.
+     */
+    private async findExecutable (wellKnownPaths: string[], name: string): Promise<string|null> {
+        for (const execPath of wellKnownPaths) {
             try {
-                await fs.stat(psPath)
-                return psPath
+                await fs.stat(execPath)
+                return execPath
             } catch { }
         }
-        // Fall back to PATH search only if not found in standard locations
-        for (const name of ['pwsh.exe', 'powershell.exe']) {
-            const found = await which(name, { nothrow: true })
-            if (found) {
-                return found
-            }
-        }
-        return 'powershell.exe'
+        return which(name, { nothrow: true })
     }
 }
