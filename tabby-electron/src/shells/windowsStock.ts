@@ -123,8 +123,9 @@ export class WindowsStockShellsProvider extends WindowsBaseShellProvider {
      */
     private async fileExists (filePath: string): Promise<boolean> {
         try {
+            const targetName = path.basename(filePath).toLowerCase()
             const names = await fs.readdir(path.dirname(filePath))
-            return names.includes(path.basename(filePath))
+            return names.some(name => name.toLowerCase() === targetName)
         } catch {
             return false
         }
