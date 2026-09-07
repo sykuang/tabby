@@ -1,6 +1,4 @@
 import * as path from 'path'
-import * as fs from 'fs/promises'
-import * as which from 'which'
 import { Injectable } from '@angular/core'
 import { HostAppService, Platform, ConfigService } from 'tabby-core'
 import { ElectronService } from '../services/electron.service'
@@ -80,59 +78,6 @@ export class WindowsStockShellsProvider extends WindowsBaseShellProvider {
             })
         }
 
-        const pwshPath = await this.findExecutable([
-            `${process.env.USERPROFILE}\\AppData\\Local\\Microsoft\\WindowsApps\\pwsh.exe`,
-            `${process.env.ProgramFiles}\\PowerShell\\7\\pwsh.exe`,
-            `${process.env['ProgramFiles(x86)']}\\PowerShell\\7\\pwsh.exe`,
-        ], 'pwsh.exe')
-        if (pwshPath) {
-            shells.push({
-                id: 'pwsh',
-                name: 'PowerShell 7',
-                command: pwshPath,
-                args: ['-nologo'],
-                icon: require('../icons/powershell-core.svg'),
-                env: this.getEnvironment(),
-                shellType: 'powershell',
-            })
-        }
-
         return shells
-    }
-
-    /**
-     * Looks for an executable at the given well-known paths first (fast),
-     * falling back to a PATH search by `name` (slower) if none are found.
-     */
-    private async findExecutable (wellKnownPaths: string[], name: string): Promise<string|null> {
-        for (const execPath of wellKnownPaths) {
-            if (await this.fileExists(execPath)) {
-                return execPath
-            }
-        }
-        return which(name, { nothrow: true })
-    }
-
-    /**
-     * Checks whether a file exists, working around a Node.js limitation on
-     * Windows App Execution Alias reparse points (e.g. `pwsh.exe` when
-     * PowerShell 7 is installed from the Microsoft Store): `fs.stat` throws
-     * for these even though the file is runnable. `fs.stat` is tried first
-     * since it's fast and works for regular files; if it fails, the parent
-     * directory is listed as a fallback, which doesn't require resolving
-     * the reparse target.
-     */
-    private async fileExists (filePath: string): Promise<boolean> {
-        try {
-            await fs.stat(filePath)
-            return true
-        } catch { }
-        try {
-            const targetName = path.basename(filePath).toLowerCase()
-            const names = await fs.readdir(path.dirname(filePath))
-            return names.some(name => name.toLowerCase() === targetName)
-        } catch {
-            return false
-        }
     }
 }

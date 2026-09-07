@@ -452,6 +452,25 @@ export class ConfigService {
             }
             config.version = 8
         }
+        if (config.version < 9) {
+            if (config.terminal?.profile === 'local:pwsh') {
+                config.terminal.profile = 'local:powershell-core'
+            }
+            const profileHotkeys = config.hotkeys?.profile
+            if (profileHotkeys?.['local:pwsh']) {
+                profileHotkeys['local:powershell-core'] = [
+                    profileHotkeys['local:powershell-core'] ?? [],
+                    profileHotkeys['local:pwsh'],
+                ].flat()
+                delete profileHotkeys['local:pwsh']
+            }
+            if (config.profileBlacklist) {
+                config.profileBlacklist = [...new Set(config.profileBlacklist.map(id =>
+                    id === 'local:pwsh' ? 'local:powershell-core' : id,
+                ))]
+            }
+            config.version = 9
+        }
     }
 
     private async maybeDecryptConfig (store) {
