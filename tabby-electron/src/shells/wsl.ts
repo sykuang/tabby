@@ -2,7 +2,7 @@ import * as fs from 'mz/fs'
 import slugify from 'slugify'
 
 import { Injectable } from '@angular/core'
-import { HostAppService, Platform, isWindowsBuild, WIN_BUILD_WSL_EXE_DISTRO_FLAG } from 'tabby-core'
+import { HostAppService, Platform, isWindowsBuild, WIN_BUILD_WSL_EXE_DISTRO_FLAG, WIN_BUILD_WSL_EXE_CD_FLAG } from 'tabby-core'
 
 import { ShellProvider, Shell } from 'tabby-local'
 
@@ -56,6 +56,11 @@ export class WSLShellProvider extends ShellProvider {
         const lxss = wnr.getRegistryKey(wnr.HK.CU, lxssPath)
         const shells: Shell[] = []
 
+        // WSL only honors `--cd` for Linux-style paths (e.g. `~`) starting with this build.
+        // On older builds, omit it and fall back to the previous (native cwd inheritance) behavior.
+        // https://github.com/microsoft/terminal/blob/main/src/cascadia/TerminalSettingsModel/WslDistroGenerator.cpp
+        const homeDirArgs = isWindowsBuild(WIN_BUILD_WSL_EXE_CD_FLAG) ? ['--cd', '~'] : []
+
         if (lxss?.DefaultDistribution) {
             const defaultDistKey = wnr.getRegistryKey(wnr.HK.CU, lxssPath + '\\' + String(lxss.DefaultDistribution.value))
             if (defaultDistKey?.DistributionName) {
@@ -63,6 +68,7 @@ export class WSLShellProvider extends ShellProvider {
                     id: 'wsl',
                     name: 'WSL / Default distro',
                     command: wslPath,
+                    args: homeDirArgs,
                     env: {
                         TERM: 'xterm-color',
                         COLORTERM: 'truecolor',
@@ -105,7 +111,7 @@ export class WSLShellProvider extends ShellProvider {
                 id: `wsl-${slug}`,
                 name: `WSL / ${name}`,
                 command: wslPath,
-                args: ['-d', name],
+                args: ['-d', name, ...homeDirArgs],
                 fsBase,
                 env: {
                     TERM: 'xterm-color',
