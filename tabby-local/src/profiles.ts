@@ -81,6 +81,7 @@ export class LocalProfilesService extends ProfileProvider<LocalProfile> {
             ...this.configDefaults.options,
             command: shell.command,
             args: shell.args ?? [],
+            homeDirArgs: shell.homeDirArgs,
             env: shell.env,
             cwd: shell.cwd ?? null,
             shellType: shell.shellType ?? null,

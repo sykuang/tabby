@@ -6,6 +6,17 @@ import { BaseSession } from 'tabby-terminal'
 import { SessionOptions, ChildProcess, PTYInterface, PTYProxy } from './api'
 import { getEnvironment, substituteEnv } from './environment'
 
+function usableCWD (path?: string|null): string|undefined {
+    if (!path) {
+        return undefined
+    }
+    if (!fsSync.existsSync(path)) {
+        console.warn('Ignoring non-existent CWD:', path)
+        return undefined
+    }
+    return path
+}
+
 const windowsDirectoryRegex = /([a-zA-Z]:[^\:\[\]\?\"\<\>\|]+)/mi
 
 function mergeEnv (...envs) {
@@ -86,15 +97,15 @@ export class Session extends BaseSession {
                 })
             }
 
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            let cwd = options.cwd || process.env.HOME
+            const explicitCWD = usableCWD(options.cwd)
 
-            if (!fsSync.existsSync(cwd!)) {
-                console.warn('Ignoring non-existent CWD:', cwd)
-                cwd = undefined
-            }
+            // A shell that knows how to start in its own home directory (WSL's `--cd ~`) only gets
+            // to do so when we have no working directory for it - those args outrank the cwd below.
+            const args = explicitCWD ? options.args : [...options.args, ...options.homeDirArgs ?? []]
 
-            pty = await this.ptyInterface.spawn(options.command, options.args, {
+            const cwd = explicitCWD ?? usableCWD(process.env.HOME)
+
+            pty = await this.ptyInterface.spawn(options.command, args, {
                 name: 'xterm-256color',
                 cols: options.width ?? 80,
                 rows: options.height ?? 30,

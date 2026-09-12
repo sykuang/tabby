@@ -59,7 +59,7 @@ export class WSLShellProvider extends ShellProvider {
         // WSL only honors `--cd` for Linux-style paths (e.g. `~`) starting with this build.
         // On older builds, omit it and fall back to the previous (native cwd inheritance) behavior.
         // https://github.com/microsoft/terminal/blob/main/src/cascadia/TerminalSettingsModel/WslDistroGenerator.cpp
-        const homeDirArgs = isWindowsBuild(WIN_BUILD_WSL_EXE_CD_FLAG) ? ['--cd', '~'] : []
+        const homeDirArgs = isWindowsBuild(WIN_BUILD_WSL_EXE_CD_FLAG) ? ['--cd', '~'] : undefined
 
         if (lxss?.DefaultDistribution) {
             const defaultDistKey = wnr.getRegistryKey(wnr.HK.CU, lxssPath + '\\' + String(lxss.DefaultDistribution.value))
@@ -68,7 +68,7 @@ export class WSLShellProvider extends ShellProvider {
                     id: 'wsl',
                     name: 'WSL / Default distro',
                     command: wslPath,
-                    args: homeDirArgs,
+                    homeDirArgs,
                     env: {
                         TERM: 'xterm-color',
                         COLORTERM: 'truecolor',
@@ -111,7 +111,8 @@ export class WSLShellProvider extends ShellProvider {
                 id: `wsl-${slug}`,
                 name: `WSL / ${name}`,
                 command: wslPath,
-                args: ['-d', name, ...homeDirArgs],
+                args: ['-d', name],
+                homeDirArgs,
                 fsBase,
                 env: {
                     TERM: 'xterm-color',
