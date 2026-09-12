@@ -30,11 +30,11 @@
     "keytar": "^7.9.0",
     "mz": "^2.7.0",
     "native-process-working-directory": "^1.0.2",
+    "node-abi": "4.35.0",
     "node-pty": "^1.2.0-beta.8",
-    "russh": "0.1.37",
+    "russh": "0.1.38",
     "rxjs": "^7.5.7",
-    "source-map-support": "^0.5.20",
-    "yargs": "^17.7.2"
+    "yargs": "^18"
   },
   "optionalDependencies": {
     "@tabby-gang/windows-blurbehind": "^3.1.0",
@@ -62,8 +62,8 @@
     "tabby-terminal": "*"
   },
   "resolutions": {
-    "node-abi": "4.9.0",
-    "node-gyp": "^10.0.0",
+    "node-abi": "4.35.0",
+    "node-gyp": "^13.0.2",
     "nan": "2.22.2",
     "node-addon-api": "^8.3.0"
   }
