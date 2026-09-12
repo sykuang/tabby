@@ -104,7 +104,7 @@ export class Session extends BaseSession {
 
             // A shell that knows how to start in its own home directory (WSL's `--cd ~`) only gets
             // to do so when we have no working directory for it - those args outrank the cwd below.
-            const args = explicitCWD ? options.args : [...options.args, ...options.homeDirArgs ?? []]
+            const args = explicitCWD ? options.args : [...options.args, ...options.homeDirArgs]
 
             const cwd = explicitCWD ?? usableCWD(process.env.HOME)
 

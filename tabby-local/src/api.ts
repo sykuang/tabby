@@ -47,7 +47,7 @@ export interface SessionOptions {
     command: string
     args: string[]
     /** See {@link Shell.homeDirArgs} */
-    homeDirArgs?: string[]
+    homeDirArgs: string[]
     cwd: string | null
     env: Record<string, string>
     width: number | null
