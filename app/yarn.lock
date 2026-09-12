@@ -1846,10 +1846,10 @@ negotiator@^1.0.0:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-1.0.0.tgz#b6c91bb47172d69f93cfd7c357bbb529019b5f6a"
   integrity sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==
 
-node-abi@4.9.0, node-abi@^3.3.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-4.9.0.tgz#ca6dabf7991e54bf3ba6d8d32641e1b84f305263"
-  integrity sha512-0isb3h+AXUblx5Iv0mnYy2WsErH+dk2e9iXJXdKAtS076Q5hP+scQhp6P4tvDeVlOBlG3ROKvkpQHtbORllq2A==
+node-abi@4.35.0, node-abi@^3.3.0:
+  version "4.35.0"
+  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-4.35.0.tgz#2eb8e04075745e2dd6594769c499828c29113446"
+  integrity sha512-ymk4aIzxdPopw2giv8Fs1Ec6vybGkjmyxUwVqhkI4MCy2tVfXdkOGGWieWVjL0THgH+7a8lRdevyupoYj3Js/Q==
   dependencies:
     semver "^7.6.3"
 
@@ -2291,10 +2291,10 @@ regexp.prototype.flags@^1.5.4:
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-russh@0.1.37:
-  version "0.1.37"
-  resolved "https://registry.yarnpkg.com/russh/-/russh-0.1.37.tgz#ad5c5b842e58dc9044664d96b789d0e369e72e9f"
-  integrity sha512-t6DQyuht+kmG57FX09vPT6tBL8rL7g5UdBiOLc+JPZNE/CMRuZqEo5JE1WmNEUcI6kjwwhmL0nw/BfDKrwb+jg==
+russh@0.1.38:
+  version "0.1.38"
+  resolved "https://registry.yarnpkg.com/russh/-/russh-0.1.38.tgz#174d6dd9fe271885dc349eb734e1b72d97826d78"
+  integrity sha512-vYT03vTTFTQMeGTTnXb5ZvYUBoJKct6UjiKZ3EOgwubWRHkQpXjbzumvtSuEDKfckZp3YSwtBNAEgmtsa+TYsA==
   dependencies:
     "@napi-rs/cli" "^2.18.3"
 
