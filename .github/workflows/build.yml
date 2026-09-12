@@ -99,7 +99,7 @@ jobs:
 
     - name: Build packages without signing
       run: scripts/build-macos.mjs
-      if: "! (github.event_name == 'push' && startsWith(github.ref, 'refs/tags'))"
+      if: "! (github.event_name == 'push' && (github.ref_protected || startsWith(github.ref, 'refs/tags')))"
       env:
         ARCH: ${{matrix.arch}}
         # DEBUG: electron-builder,electron-builder:*
